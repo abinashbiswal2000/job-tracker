@@ -9,7 +9,7 @@ export default function EditJobPage() {
     const [variablesObject, updateVariables] = useState({
         companyName: "",
         position: "",
-        date: new Date().toISOString().slice(0, 10)
+        appliedOn: new Date().toISOString().slice(0, 10)
     });
     
     const [selectValue, handleSelect] = useState("APPLIED");
@@ -36,12 +36,12 @@ export default function EditJobPage() {
                     }
 
                     const data = await response.json();
-                    console.log(data.job);
+                    // console.log(data.job);
                     updateVariables(
                         {
                             companyName: data.job.companyName,
                             position: data.job.position,
-                            date: data.job.appliedOn.slice(0,10)
+                            appliedOn: data.job.appliedOn.slice(0, 10)
                         }
                     );
                     handleSelect(data.job.status);
@@ -56,6 +56,9 @@ export default function EditJobPage() {
 
     function handleChange(e: React.ChangeEvent<HTMLInputElement>) {
         updateVariables((prev) => {
+            if (e.target.name === "appliedOn") {
+                return { ...prev, [e.target.name]: new Date(e.target.value).toISOString().slice(0, 10) }
+            }
             return { ...prev, [e.target.name]: e.target.value }
         });
     }
@@ -74,15 +77,14 @@ export default function EditJobPage() {
                                 "Content-Type": "application/json",
                                 "Authorization": `Bearer ${localStorage.getItem("token")}`
                             },
-                            body: JSON.stringify({ ...variablesObject, status: selectValue })
+                            body: JSON.stringify({ ...variablesObject, status: selectValue, "appliedOn": new Date(variablesObject.appliedOn) })
                         }
                     )
                     if (response.ok === false) {
                         alert("Job Edit Failed");
                         throw new Error("Job Edit Failed");
                     }
-                    const data = await response.json();
-                    console.log(data);
+                    await response.json();
                     navigate('/')
                 } catch (e) {
                     console.error(e);
@@ -109,7 +111,7 @@ export default function EditJobPage() {
             </select>
 
             <span className="mt-1">Date</span>
-            <input onChange={handleChange} value={variablesObject.date} name="date" className="focus:outline-blue-300 p-2 border border-gray-300" type="date" id="" />
+            <input onChange={handleChange} value={variablesObject.appliedOn} name="appliedOn" className="focus:outline-blue-300 p-2 border border-gray-300" type="date" id="" />
 
             <button
                 className="bg-blue-500 cursor-pointer hover:bg-blue-600 transtion duration-300 text-white p-2 rounded-lg"

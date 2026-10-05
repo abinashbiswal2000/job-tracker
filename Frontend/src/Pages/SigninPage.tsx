@@ -46,7 +46,7 @@ export default function SigninPage() {
                     }
 
                     const data = await response.json();
-                    console.log(data);
+                    // console.log(data);
                     localStorage.setItem("token", data.jwt);
 
                     navigate("/");

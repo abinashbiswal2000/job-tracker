@@ -43,8 +43,7 @@ export default function SignupPage() {
                         throw new Error("Signup Failed");
                     }
 
-                    const data = await response.json();
-                    console.log(data);
+                    await response.json();
 
                     alert("Account Created Please sign in.");
 

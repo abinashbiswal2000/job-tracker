@@ -53,121 +53,122 @@ export default function HomePage() {
 
     return (
         <div className="mt-10 flex flex-col max-w-5xl mx-auto justify-center gap-1">
-            <div className="border border-gray-300 p-5 text-center text-5xl">Job Application Tracker</div>
-            <table className="text-left border border-gray-300 border-2">
-                <thead>
-                    <tr>
-                        <th className="p-3 border-1 border-gray-300">SL No</th>
-                        <th className="p-3 border-1 border-gray-300">Company</th>
-                        <th className="p-3 border-1 border-gray-300">Position</th>
-                        <th className="p-3 border-1 border-gray-300">Status</th>
-                        <th className="p-3 border-1 border-gray-300">Date Applied</th>
-                        <th className="p-3 border-1 border-gray-300">Edit</th>
-                        <th className="p-3 border-1 border-gray-300">Delete</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {jobs.map((job) => {
-                        return (
-                            <tr key={Number(job.id)} className="">
-                                <td className="p-3 border-1 border-gray-300">{jobs.indexOf(job) + 1}</td>
-                                <td className="p-3 border-1 border-gray-300">{job.companyName}</td>
-                                <td className="p-3 border-1 border-gray-300">{job.position}</td>
-                                <td className="p-3 border-1 border-gray-300">{job.status}</td>
-                                <td className="p-3 border-1 border-gray-300">{formatDate(job.appliedOn)}</td>
-                                <td className="p-0 border-1 border-gray-300 bg-yellow-300 cursor-pointer hover:bg-black hover:text-white transition duration-500">
-                                    <button className="cursor-pointer p-3 w-full h-full" onClick={()=>{navigate(`/jobs/${job.id}/edit`)}}>
-                                        Edit
-                                    </button>
-                                </td>
-                                <td
-                                    className="p-0 border-1 border-gray-300 bg-red-300 cursor-pointer hover:bg-black hover:text-white transition duration-500"
-                                >
-                                    <button 
-                                        className="cursor-pointer p-3 w-full h-full" 
-                                        onClick={async () => {
-                                            try {
-                                                const response = await fetch(
-                                                    `http://localhost:4913/jobs/${job.id}`,
-                                                    {
-                                                        method: "DELETE",
-                                                        headers: {
-                                                            "Content-Type": "application/json",
-                                                            "Authorization": `Bearer ${localStorage.getItem("token")}`
-                                                        }
-                                                    }
-                                                )
-                                                if (response.ok === false) {
-                                                    alert("Delete Failed");
-                                                    throw new Error("Delete Failed");
-                                                }
-                                                const data = await response.json();
-                                                console.log(data);
-                                                setJobs(
-                                                    (prev) => {
-                                                        return prev.filter((j) => {return j.id !== job.id})
-                                                    }
-                                                );
-                                            } catch (e) {
-                                                console.error(e);
-                                            }
-                                        }}
+            <div className="p-5 text-center text-5xl">Job Application Tracker</div>
+            <div className="w-full overflow-x-auto">
+                <table className="w-full min-w-max text-sm text-left border border-gray-300 border-2">
+                    <thead>
+                        <tr>
+                            <th className="p-3 border-1 border-gray-300">SL No</th>
+                            <th className="p-3 border-1 border-gray-300">Company</th>
+                            <th className="p-3 border-1 border-gray-300">Position</th>
+                            <th className="p-3 border-1 border-gray-300">Status</th>
+                            <th className="p-3 border-1 border-gray-300">Date Applied</th>
+                            <th className="p-3 border-1 border-gray-300">Edit</th>
+                            <th className="p-3 border-1 border-gray-300">Delete</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {jobs.map((job) => {
+                            return (
+                                <tr key={Number(job.id)} className="">
+                                    <td className="p-3 border-1 border-gray-300">{jobs.indexOf(job) + 1}</td>
+                                    <td className="p-3 border-1 border-gray-300">{job.companyName}</td>
+                                    <td className="p-3 border-1 border-gray-300">{job.position}</td>
+                                    <td className="p-3 border-1 border-gray-300">{job.status}</td>
+                                    <td className="p-3 border-1 border-gray-300">{formatDate(job.appliedOn)}</td>
+                                    <td className="p-0 border-1 border-gray-300 bg-yellow-300 cursor-pointer hover:bg-black hover:text-white transition duration-500">
+                                        <button className="cursor-pointer p-3 w-full h-full" onClick={() => { navigate(`/jobs/${job.id}/edit`) }}>
+                                            Edit
+                                        </button>
+                                    </td>
+                                    <td
+                                        className="p-0 border-1 border-gray-300 bg-red-300 cursor-pointer hover:bg-black hover:text-white transition duration-500"
                                     >
-                                        Delete
-                                    </button>
-                                </td>
-                            </tr>
-                        )
-                    })}
-                </tbody>
-            </table>
-            <button
-                className="transition duration-300 hover:bg-blue-600 bg-blue-500  text-white p-4 rounded-lg cursor-pointer"
-                onClick={() => {
-                    navigate('/jobs/new');
-                }}
-            >
-                Add Job
-            </button>
-            <button
-                className="transition duration-300 hover:bg-blue-600 bg-blue-500  text-white p-4 rounded-lg cursor-pointer"
-                onClick={() => {
-                    localStorage.removeItem("token");
-                    navigate("/signin")
-                }}
-            >
-                logout
-            </button>
-            <hr />
-            <button 
-                className="transition duration-300 hover:bg-red-600 bg-red-500  text-white p-4 rounded-lg cursor-pointer" 
-                onClick={ async () => {
-                    try {
-                        const response = await fetch(
-                            "http://localhost:4913/users/me",
-                            {
-                                method: "DELETE", 
-                                headers: {
-                                    "Content-Type": "application/json",
-                                    "Authorization": `Bearer ${localStorage.getItem("token")}`
-                                }
-                            }
-                        );
-                        if (response.ok === false) {
-                            alert("Delete Failed")
-                            throw new Error("Delete Failed");
-                        }
-                        const data = await response.json();
-                        console.log(data);
+                                        <button
+                                            className="cursor-pointer p-3 w-full h-full"
+                                            onClick={async () => {
+                                                try {
+                                                    const response = await fetch(
+                                                        `http://localhost:4913/jobs/${job.id}`,
+                                                        {
+                                                            method: "DELETE",
+                                                            headers: {
+                                                                "Content-Type": "application/json",
+                                                                "Authorization": `Bearer ${localStorage.getItem("token")}`
+                                                            }
+                                                        }
+                                                    )
+                                                    if (response.ok === false) {
+                                                        alert("Delete Failed");
+                                                        throw new Error("Delete Failed");
+                                                    }
+                                                    await response.json();
+                                                    setJobs(
+                                                        (prev) => {
+                                                            return prev.filter((j) => { return j.id !== job.id })
+                                                        }
+                                                    );
+                                                } catch (e) {
+                                                    console.error(e);
+                                                }
+                                            }}
+                                        >
+                                            Delete
+                                        </button>
+                                    </td>
+                                </tr>
+                            )
+                        })}
+                    </tbody>
+                </table>
+            </div>
+            <div className="flex flex-row gap-1">
+                <button
+                    className="flex-1 transition duration-300 hover:bg-black bg-blue-500  text-white p-4 rounded-lg cursor-pointer"
+                    onClick={() => {
+                        navigate('/jobs/new');
+                    }}
+                >
+                    Add Job
+                </button>
+                <button
+                    className="flex-1 transition duration-300 hover:bg-black bg-blue-500  text-white p-4 rounded-lg cursor-pointer"
+                    onClick={() => {
                         localStorage.removeItem("token");
-                        navigate('/signin');
-                    } catch (e) {
-                        console.log(e);
-                    }
-                } }
-            >
-                Delete Account
-            </button>
+                        navigate("/signin")
+                    }}
+                >
+                    logout
+                </button>
+                <button
+                    className="flex-1 transition duration-300 hover:bg-black bg-red-500  text-white p-4 rounded-lg cursor-pointer"
+                    onClick={async () => {
+                        try {
+                            const response = await fetch(
+                                "http://localhost:4913/users/me",
+                                {
+                                    method: "DELETE",
+                                    headers: {
+                                        "Content-Type": "application/json",
+                                        "Authorization": `Bearer ${localStorage.getItem("token")}`
+                                    }
+                                }
+                            );
+                            if (response.ok === false) {
+                                alert("Delete Failed")
+                                throw new Error("Delete Failed");
+                            }
+                            await response.json();
+                            localStorage.removeItem("token");
+                            navigate('/signin');
+                        } catch (e) {
+                            // console.log(e);
+                        }
+                    }}
+                >
+                    Delete Account
+                </button>
+            </div>
         </div>
     )
 }

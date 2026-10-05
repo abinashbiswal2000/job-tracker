@@ -7,7 +7,7 @@ export default function AddJobPage () {
     const [variablesObject, updateVariables] = useState({
         companyName: "",
         position: "",
-        date: new Date().toISOString().slice(0, 10)
+        appliedOn: new Date().toISOString().slice(0, 10)
     });
 
     const [selectValue, handleSelect] = useState("APPLIED");
@@ -32,15 +32,14 @@ export default function AddJobPage () {
                                 "Content-Type": "application/json",
                                 "Authorization": `Bearer ${localStorage.getItem("token")}`
                             },
-                            body: JSON.stringify({...variablesObject, status: selectValue})
+                            body: JSON.stringify({...variablesObject, status: selectValue, appliedOn: new Date(variablesObject.appliedOn)})
                         }
                     )
                     if (response.ok === false) {
                         alert("Job Creation Failed");
                         throw new Error("Job Creation Failed");
                     }
-                    const data = await response.json();
-                    console.log(data);
+                    await response.json();
                     navigate('/')                    
                 } catch (e) {
                     console.error(e);
@@ -67,7 +66,7 @@ export default function AddJobPage () {
             </select>
             
             <span className="mt-1">Date</span>
-            <input onChange={handleChange} value={variablesObject.date} name="date" className="focus:outline-blue-300 p-2 border border-gray-300" type="date" id="" />
+            <input onChange={handleChange} value={variablesObject.appliedOn} name="appliedOn" className="focus:outline-blue-300 p-2 border border-gray-300" type="date" id="" />
             
             <button 
                 className="bg-blue-500 cursor-pointer hover:bg-blue-600 transtion duration-300 text-white p-2 rounded-lg"

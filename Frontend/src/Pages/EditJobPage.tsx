@@ -20,7 +20,8 @@ export default function EditJobPage() {
             try {
                 async function loadData () {
                     const response = await fetch(
-                        `http://localhost:4913/jobs/${id}`,
+                        // `http://localhost:4913/jobs/${id}`,
+                        `${import.meta.env.VITE_API_URL}/jobs/${id}`,
                         {
                             method: "GET",
                             headers: {
@@ -48,7 +49,7 @@ export default function EditJobPage() {
                 }
                 loadData();
             } catch (e) {
-                console.error(e);
+                // console.error(e);
             }
         },
         []
@@ -70,7 +71,8 @@ export default function EditJobPage() {
                 e.preventDefault();
                 try {
                     const response = await fetch(
-                        `http://localhost:4913/jobs/${id}`,
+                        // `http://localhost:4913/jobs/${id}`,
+                        `${import.meta.env.VITE_API_URL}/jobs/${id}`,
                         {
                             method: "PATCH",
                             headers: {
@@ -87,7 +89,7 @@ export default function EditJobPage() {
                     await response.json();
                     navigate('/')
                 } catch (e) {
-                    console.error(e);
+                    // console.error(e);
                 }
             }}
         >

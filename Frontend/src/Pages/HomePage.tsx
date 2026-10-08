@@ -26,7 +26,8 @@ export default function HomePage() {
         () => {
             async function loadData() {
                 const response = await fetch(
-                    "http://localhost:4913/jobs",
+                    // "http://localhost:4913/jobs",
+                    `${import.meta.env.VITE_API_URL}/jobs`,
                     {
                         method: "GET",
                         headers: {
@@ -89,7 +90,8 @@ export default function HomePage() {
                                             onClick={async () => {
                                                 try {
                                                     const response = await fetch(
-                                                        `http://localhost:4913/jobs/${job.id}`,
+                                                        // `http://localhost:4913/jobs/${job.id}`,
+                                                        `${import.meta.env.VITE_API_URL}/jobs/${job.id}`,
                                                         {
                                                             method: "DELETE",
                                                             headers: {
@@ -109,7 +111,7 @@ export default function HomePage() {
                                                         }
                                                     );
                                                 } catch (e) {
-                                                    console.error(e);
+                                                    // console.error(e);
                                                 }
                                             }}
                                         >
@@ -145,7 +147,8 @@ export default function HomePage() {
                     onClick={async () => {
                         try {
                             const response = await fetch(
-                                "http://localhost:4913/users/me",
+                                // "http://localhost:4913/users/me",
+                                `${import.meta.env.VITE_API_URL}/users/me`,
                                 {
                                     method: "DELETE",
                                     headers: {

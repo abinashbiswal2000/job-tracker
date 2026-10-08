@@ -29,7 +29,8 @@ export default function SignupPage() {
                 e.preventDefault();
                 try {
                     const response = await fetch(
-                        "http://localhost:4913/signup",
+                        // "http://localhost:4913/signup",
+                        `${import.meta.env.VITE_API_URL}/signup`,
                         {
                             method: "POST",
                             headers: {
@@ -51,7 +52,7 @@ export default function SignupPage() {
 
 
                 } catch (error) {
-                    console.error(error)
+                    // console.error(error)
                 }
             }}
         >

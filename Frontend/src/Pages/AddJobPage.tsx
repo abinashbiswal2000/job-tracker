@@ -25,7 +25,8 @@ export default function AddJobPage () {
                 e.preventDefault();
                 try {
                     const response = await fetch(
-                        "http://localhost:4913/jobs",
+                        // "http://localhost:4913/jobs",
+                        `${import.meta.env.VITE_API_URL}/jobs`,
                         {
                             method: "POST",
                             headers: {
@@ -42,7 +43,7 @@ export default function AddJobPage () {
                     await response.json();
                     navigate('/')                    
                 } catch (e) {
-                    console.error(e);
+                    // console.error(e);
                 } 
             }}
         >

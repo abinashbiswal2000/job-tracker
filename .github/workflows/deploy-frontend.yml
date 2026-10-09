@@ -5,6 +5,7 @@ on:
     branches: [master]
     paths:
       - "Frontend/**"
+  workflow_dispatch:
 
 permissions:
   id-token: write
@@ -33,6 +34,11 @@ jobs:
         env:
           VITE_API_URL: ${{ vars.VITE_API_URL }}
         run: npm run build
+
+      - name: Debug OIDC subject
+        run: |
+          TOKEN=$(curl -s -H "Authorization: bearer $ACTIONS_ID_TOKEN_REQUEST_TOKEN" "$ACTIONS_ID_TOKEN_REQUEST_URL&audience=sts.amazonaws.com" | jq -r '.value')
+          echo "$TOKEN" | cut -d. -f2 | base64 -d 2>/dev/null | jq '{sub, aud, iss}'
 
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4

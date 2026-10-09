@@ -1,0 +1,47 @@
+name: Deploy Frontend
+
+on:
+  push:
+    branches: [master]
+    paths:
+      - "Frontend/**"
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+          cache-dependency-path: Frontend/package-lock.json
+
+      - name: Install dependencies
+        working-directory: Frontend
+        run: npm ci
+
+      - name: Build
+        working-directory: Frontend
+        env:
+          VITE_API_URL: ${{ vars.VITE_API_URL }}
+        run: npm run build
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ vars.AWS_ROLE_ARN }}
+          aws-region: ap-south-1
+
+      - name: Upload to S3
+        run: aws s3 sync Frontend/dist s3://${{ vars.S3_BUCKET }} --delete
+
+      - name: Invalidate CloudFront cache
+        run: aws cloudfront create-invalidation --distribution-id ${{ vars.CLOUDFRONT_DISTRIBUTION_ID }} --paths "/*"

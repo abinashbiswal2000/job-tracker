@@ -32,16 +32,22 @@ jobs:
             --instance-ids "$INSTANCE_ID" \
             --document-name "AWS-RunShellScript" \
             --comment "GitHub deploy ${GITHUB_SHA}" \
-            --timeout-seconds 600 \
+            --timeout-seconds 900 \
             --parameters "$PARAMS" \
             --query "Command.CommandId" --output text)
           echo "Command ID: $CMD_ID"
 
-          sleep 5
-          aws ssm wait command-executed --command-id "$CMD_ID" --instance-id "$INSTANCE_ID" || true
+          STATUS="Pending"
+          for i in $(seq 1 150); do
+            sleep 6
+            STATUS=$(aws ssm get-command-invocation --command-id "$CMD_ID" --instance-id "$INSTANCE_ID" --query Status --output text 2>/dev/null || echo "Pending")
+            echo "[$i] Status: $STATUS"
+            case "$STATUS" in
+              Pending|InProgress|Delayed) ;;
+              *) break ;;
+            esac
+          done
 
-          STATUS=$(aws ssm get-command-invocation --command-id "$CMD_ID" --instance-id "$INSTANCE_ID" --query Status --output text)
-          echo "Status: $STATUS"
           echo "----- OUTPUT -----"
           aws ssm get-command-invocation --command-id "$CMD_ID" --instance-id "$INSTANCE_ID" --query StandardOutputContent --output text
           echo "----- ERRORS -----"
